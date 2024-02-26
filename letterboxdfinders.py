@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import math
 
 
 def get_nth_genre(df, n, bar_width, total_rows):
