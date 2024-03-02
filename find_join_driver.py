@@ -1,4 +1,5 @@
-# this driver adds Director and Genre columns to a given Letterboxd list.
+# This driver is a demo of capabilities. 
+# It adds Director, and Genre, and Actor columns to a given Letterboxd list.
 
 import math
 import csv
