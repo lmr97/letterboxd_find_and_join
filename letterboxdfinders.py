@@ -1,22 +1,24 @@
 import requests
-from bs4 import BeautifulSoup
-import math
+from selectolax.parser import HTMLParser
 
+# getting any set of information from the tabs 
+# in the center of the page on Letterboxd,
+# except for Releases; the logic there is different
 
-def get_nth_genre(df, n, bar_width, total_rows):
-    webpage = requests.get(df.iloc[0,3])
-    soup = BeautifulSoup(webpage.text, features="lxml") # make page parseable
+# attribute is a string, and can be any element you see in the tabs.
+# if there are multiple words in the attribute, it must have a hyphen (-)
+# between them. For example, 'assistant director' should be 'assistant-director'.
+def get_tabbed_attribute(url, attribute):
+    webpage = requests.get(url)
+    tree = HTMLParser(webpage.text)
 
-    genre_tab = soup.find(id="tab-genres")
-    if(genre_tab): genre_elements = genre_tab.p.find_all("a")
-    else: return None
+    # find HTML elements whose href begins with 'attibute'
+    tabbed_elements = tree.css("a[href*='/" + attribute + "/']")
 
-    # loading bar
-    bar_width_now = math.ceil(bar_width * (df.index[0]+1)/total_rows)
-    print("| ", "█" * bar_width_now, 
-          (bar_width - bar_width_now) * " ", "|", 
-          f"{(df.index[0]+1)/total_rows:.0%}",
-          end = "\r")
-
-    if (len(genre_elements) > n): return genre_elements[n].contents[0]
-    else: return None
+    # extract text from found HTML elements
+    attribute_list = []
+    for element in tabbed_elements:
+        attribute_list.append(element.text())
+    
+    # return only distinct values, but still as a list
+    return set(attribute_list)
