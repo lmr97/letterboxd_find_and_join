@@ -37,7 +37,14 @@ def add_tab_content_columns(file_path, attribute_name):
 
     with open(updated_file_loc, "w") as lbfile_writer:
         
-        col_count = len(lb_csv_read[0].split(","))  # length of columns in header at the start
+        # determine where the actual column labels begin. If the file is a Letterboxd list,
+        # then there will be a row at the top that starts with "Letterboxd list export" 
+        # with a version number afterwards, 2 more rows of list info, then a blank line
+        header_line = 0 # default
+        if (lb_csv_read[0].find("Le") == 0): 
+            header_line = 4
+
+        col_count = len(lb_csv_read[header_line].split(","))  # length of columns in header at the start
         # we'll need to know how many the max of each is in order to make the header
         max_attribute_count = 0 
         
@@ -48,14 +55,16 @@ def add_tab_content_columns(file_path, attribute_name):
             if (line.find("\n") > 0): line = line[0:-1]
             parsed_line = line.split(",")
 
-            # we need to know what the highest genre and director counts are
+            # we need to know what the highest attribute counts are
             # before we can do the header,
             # so we'll look for it while we're looping through the rows
             # thus, if we're on the header, don't do anything to it
-            if (i == 0):
+            if (i == 2):  # line 2 is the last line of list info, doesn't need newline
+                whole_line = ",".join(parsed_line)  
+            elif (i <= header_line):
                 whole_line = ",".join(parsed_line)+"\n"
             else:
-                line_url = parsed_line[3]
+                line_url = parsed_line[3]  # URL is always in the 4th column
                 attribute_content = lbf.get_tabbed_attribute(line_url, attribute_name)
 
                 # add extra commas for null values under each column 
@@ -74,7 +83,7 @@ def add_tab_content_columns(file_path, attribute_name):
         # now that we know how long the longest line is, we know how many genre lines to add
         
         # get header and replace newline character with comma at the end
-        header = lb_csv_read[0]
+        header = lb_csv_read[header_line]
         header = header[0:-1]  
         header += ","
 
@@ -88,7 +97,7 @@ def add_tab_content_columns(file_path, attribute_name):
         header = header[0:-1] 
         header += "\n"
 
-        lb_csv_read[0] = header
+        lb_csv_read[header_line] = header
         lbfile_writer.writelines(lb_csv_read)
 
     print_centered_msg(attribute_name + " column(s) added!")

@@ -12,7 +12,7 @@ def get_tabbed_attribute(url, attribute):
     webpage = requests.get(url)
     tree = HTMLParser(webpage.text)
 
-    # find HTML elements whose href begins with 'attibute'
+    # find HTML elements whose href contains 'attibute'
     tabbed_elements = tree.css("a[href*='/" + attribute + "/']")
 
     # extract text from found HTML elements
