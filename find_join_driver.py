@@ -1,4 +1,5 @@
-# this driver adds Director and Genre columns to a given Letterboxd list.
+# This driver is a demo of capabilities. 
+# It adds Director, and Genre, and Actor columns to a given Letterboxd list.
 
 import math
 import csv
@@ -55,9 +56,9 @@ def add_tab_content_columns(file_path, attribute_name):
             if (line.find("\n") > 0): line = line[0:-1]
             parsed_line = line.split(",")
 
-            # we need to know what the highest attribute counts are
-            # before we can do the header,
+            # we need to know what the highest attribute counts are before we can do the header,
             # so we'll look for it while we're looping through the rows
+            
             # thus, if we're on the header, don't do anything to it
             if (i == 2):  # line 2 is the last line of list info, doesn't need newline
                 whole_line = ",".join(parsed_line)  
@@ -82,12 +83,12 @@ def add_tab_content_columns(file_path, attribute_name):
         
         # now that we know how long the longest line is, we know how many genre lines to add
         
-        # get header and replace newline character with comma at the end
-        header = lb_csv_read[header_line]
+        # get header and replace newline character with comma at the end, for new column names
+        header = lb_csv_read[0]
         header = header[0:-1]  
         header += ","
 
-        # add director columns then genre columns
+        # add attribute columns
         attribute_pretty = attribute_name.replace("-", " ")
         attribute_pretty = attribute_pretty.capitalize()
         for number in range(max_attribute_count):
