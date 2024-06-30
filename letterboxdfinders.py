@@ -22,3 +22,17 @@ def get_tabbed_attribute(url, attribute):
     
     # return only distinct values, but still as a list
     return set(attribute_list)
+
+
+def get_avg_rating(film_url):
+    webpage = requests.get(film_url)
+    tree = HTMLParser(webpage.text)
+    rating_element = tree.css("meta[name='twitter:data2']")   # returns list, albeit with 1 element
+    
+    avg_rating = None
+    if (len(rating_element) > 0):
+        rating_element_content = rating_element[0].attributes['content']
+        rating_element_title_parsed = rating_element_content.split(" ")
+        avg_rating = float(rating_element_title_parsed[0])
+
+    return avg_rating

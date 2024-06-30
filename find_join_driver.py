@@ -2,7 +2,6 @@
 # It adds Director, and Genre, and Actor columns to a given Letterboxd list.
 
 import math
-import csv
 import letterboxdfinders as lbf
 
 
